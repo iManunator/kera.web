@@ -1,5 +1,12 @@
-/** Static night city street scene used as the patient-view sample. */
-export function NightScene() {
+interface SceneProps {
+  /** Prefix for SVG paint-server IDs so multiple instances don't collide. */
+  uid?: string
+}
+
+/** Static night city street scene — glare-heavy sample. */
+export function NightScene({ uid = 'night' }: SceneProps) {
+  const g = (name: string) => `${uid}-${name}`
+
   return (
     <svg
       viewBox="0 0 960 540"
@@ -8,36 +15,34 @@ export function NightScene() {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={g('sky')} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#0a1020" />
           <stop offset="55%" stopColor="#121c33" />
           <stop offset="100%" stopColor="#1a2438" />
         </linearGradient>
-        <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={g('road')} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#1c2436" />
           <stop offset="100%" stopColor="#0e1420" />
         </linearGradient>
-        <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
+        <radialGradient id={g('lampGlow')} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#fff6d0" stopOpacity="0.95" />
           <stop offset="40%" stopColor="#ffd56a" stopOpacity="0.45" />
           <stop offset="100%" stopColor="#ffd56a" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id="headlight" cx="50%" cy="50%" r="50%">
+        <radialGradient id={g('headlight')} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
           <stop offset="35%" stopColor="#dfefff" stopOpacity="0.7" />
           <stop offset="100%" stopColor="#8ab4ff" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id="taillight" cx="50%" cy="50%" r="50%">
+        <radialGradient id={g('taillight')} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#ffd0d0" stopOpacity="1" />
           <stop offset="40%" stopColor="#ff5050" stopOpacity="0.65" />
           <stop offset="100%" stopColor="#ff3030" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* Sky */}
-      <rect width="960" height="540" fill="url(#sky)" />
+      <rect width="960" height="540" fill={`url(#${g('sky')})`} />
 
-      {/* Distant city silhouette */}
       <g fill="#0d1526" opacity="0.95">
         <rect x="40" y="210" width="70" height="160" />
         <rect x="120" y="180" width="55" height="190" />
@@ -51,7 +56,6 @@ export function NightScene() {
         <rect x="870" y="220" width="60" height="150" />
       </g>
 
-      {/* Building windows */}
       <g fill="#f0c86a" opacity="0.75">
         {[
           [55, 230],
@@ -79,50 +83,31 @@ export function NightScene() {
         ))}
       </g>
 
-      {/* Road */}
-      <path d="M0 370 L960 370 L960 540 L0 540 Z" fill="url(#road)" />
-      <path
-        d="M470 370 L490 370 L520 540 L440 540 Z"
-        fill="#2a3348"
-        opacity="0.8"
-      />
-      {/* Lane dashes */}
+      <path d="M0 370 L960 370 L960 540 L0 540 Z" fill={`url(#${g('road')})`} />
+      <path d="M470 370 L490 370 L520 540 L440 540 Z" fill="#2a3348" opacity="0.8" />
       {[400, 440, 480, 520].map((y, i) => (
-        <rect
-          key={i}
-          x="472"
-          y={y}
-          width="16"
-          height="18"
-          rx="2"
-          fill="#d4c07a"
-          opacity="0.55"
-        />
+        <rect key={i} x="472" y={y} width="16" height="18" rx="2" fill="#d4c07a" opacity="0.55" />
       ))}
 
-      {/* Sidewalks */}
       <rect x="0" y="360" width="960" height="12" fill="#222b3d" />
 
-      {/* Street lamps */}
       {[120, 320, 640, 840].map((x, i) => (
         <g key={i}>
           <rect x={x} y="250" width="4" height="120" fill="#3a4660" />
           <rect x={x - 14} y="248" width="32" height="6" rx="2" fill="#4a5874" />
-          <circle cx={x + 2} cy="248" r="28" fill="url(#lampGlow)" />
+          <circle cx={x + 2} cy="248" r="28" fill={`url(#${g('lampGlow')})`} />
           <circle cx={x + 2} cy="250" r="5" fill="#fff4c2" />
         </g>
       ))}
 
-      {/* Oncoming car headlights */}
       <g>
         <rect x="380" y="400" width="70" height="28" rx="8" fill="#1a2233" />
-        <circle cx="395" cy="414" r="22" fill="url(#headlight)" />
-        <circle cx="435" cy="414" r="22" fill="url(#headlight)" />
+        <circle cx="395" cy="414" r="22" fill={`url(#${g('headlight')})`} />
+        <circle cx="435" cy="414" r="22" fill={`url(#${g('headlight')})`} />
         <circle cx="395" cy="414" r="5" fill="#ffffff" />
         <circle cx="435" cy="414" r="5" fill="#ffffff" />
       </g>
 
-      {/* Traffic lights */}
       <g>
         <rect x="700" y="200" width="10" height="90" fill="#3a4660" />
         <rect x="688" y="190" width="34" height="70" rx="6" fill="#1a2233" stroke="#4a5874" />
@@ -141,32 +126,26 @@ export function NightScene() {
         <circle cx="235" cy="262" r="14" fill="#3dd6c6" opacity="0.35" />
       </g>
 
-      {/* Cars ahead — taillights */}
       <g>
         <rect x="560" y="390" width="80" height="26" rx="7" fill="#182030" />
-        <circle cx="575" cy="403" r="16" fill="url(#taillight)" />
-        <circle cx="625" cy="403" r="16" fill="url(#taillight)" />
+        <circle cx="575" cy="403" r="16" fill={`url(#${g('taillight')})`} />
+        <circle cx="625" cy="403" r="16" fill={`url(#${g('taillight')})`} />
         <circle cx="575" cy="403" r="4" fill="#ff8080" />
         <circle cx="625" cy="403" r="4" fill="#ff8080" />
       </g>
       <g>
         <rect x="250" y="420" width="95" height="30" rx="8" fill="#182030" />
-        <circle cx="270" cy="435" r="18" fill="url(#taillight)" />
-        <circle cx="325" cy="435" r="18" fill="url(#taillight)" />
+        <circle cx="270" cy="435" r="18" fill={`url(#${g('taillight')})`} />
+        <circle cx="325" cy="435" r="18" fill={`url(#${g('taillight')})`} />
       </g>
 
-      {/* Neon shop signs */}
       <rect x="780" y="280" width="70" height="18" rx="3" fill="#3dd6c6" opacity="0.85" />
-      <rect x="780" y="280" width="70" height="18" rx="3" fill="#3dd6c6" opacity="0.25" />
       <rect x="90" y="300" width="55" height="14" rx="3" fill="#7dd3fc" opacity="0.7" />
 
-      {/* Wet road reflections */}
       <ellipse cx="395" cy="480" rx="30" ry="8" fill="#dfefff" opacity="0.12" />
       <ellipse cx="435" cy="480" rx="30" ry="8" fill="#dfefff" opacity="0.12" />
       <ellipse cx="575" cy="455" rx="20" ry="6" fill="#ff6060" opacity="0.15" />
       <ellipse cx="625" cy="455" rx="20" ry="6" fill="#ff6060" opacity="0.15" />
-      <ellipse cx="122" cy="430" rx="18" ry="5" fill="#ffd56a" opacity="0.12" />
-      <ellipse cx="642" cy="430" rx="18" ry="5" fill="#ffd56a" opacity="0.12" />
     </svg>
   )
 }
