@@ -1,0 +1,1 @@
+export { CorneaDiagram } from './CorneaDiagram'
