@@ -6,13 +6,25 @@ A modern, high-performance visual simulator that illustrates how **Keratoconus**
 
 ### Dual-View Experience
 
-1. **Vision Simulation (Patient View)** — Night city street scene with real-time distortions:
-   - Blur / myopia (CSS `blur`)
-   - Irregular astigmatism (SVG `feDisplacementMap`)
+1. **Vision Simulation (Patient View)** — Switchable sample pictures with real-time distortions:
+   - **Scenes:** Night Street, Day Street, Park View, Reading Chart
+   - Blur (CSS `blur`)
+   - Irregular astigmatism (SVG `feDisplacementMap`) — keratoconus
    - Ghosting / monocular polyopia (layered offsets + drop-shadows)
    - Glare & light halos (CSS radial-gradient overlays + brightness)
 
 2. **Eye Cross-Section (Anatomical View)** — Responsive SVG diagram of the cornea morphing from a smooth dome to a steepened, thinned cone, with scarring opacity in advanced/severe stages.
+
+### Vision Modes
+
+| Mode | What you see |
+|------|----------------|
+| **Normal** | Sharp emmetropic vision |
+| **Nearsighted (Myopia)** | Distance blur; reading stays clearer |
+| **Farsighted (Hyperopia)** | Near/reading blur; distance stays clearer |
+| **Keratoconus** | Ghosting, glare, irregular blur (stage sliders) |
+
+Toggle **Compare with normal** for a side-by-side normal vs selected mode view.
 
 ### Interactive Controls
 
@@ -23,7 +35,7 @@ A modern, high-performance visual simulator that illustrates how **Keratoconus**
 | Visual Ghosting / Astigmatism | 0–100% | Irregular optics / polyopia |
 | Glare & Night Halos | 0–100% | Scatter around bright lights |
 
-**Stage preset buttons** snap all sliders to Mild / Moderate / Advanced / Severe clinical-inspired values.
+**Stage preset buttons** snap all sliders to Mild / Moderate / Advanced / Severe clinical-inspired values (Keratoconus mode).
 
 ## Tech Stack
 
@@ -37,11 +49,18 @@ A modern, high-performance visual simulator that illustrates how **Keratoconus**
 ```
 src/
   components/
-    VisionSimulator/   # Patient-view night scene + live filters
+    VisionSimulator/   # Patient-view scenes + live filters
+      NightScene.tsx
+      DayScene.tsx
+      ParkScene.tsx
+      ReadingScene.tsx
+      SceneView.tsx
     CorneaDiagram/     # Anatomical SVG cross-section
-    Controls/          # Sliders + stage presets
+    Controls/          # Scenes, vision modes, sliders, stage presets
   lib/
-    stages.ts          # Clinical presets + effect derivation
+    stages.ts          # KC clinical presets + effect derivation
+    scenes.ts          # Sample picture catalog
+    visionModes.ts     # Normal / myopia / hyperopia / KC
   types.ts
   App.tsx
   index.css
@@ -80,11 +99,11 @@ npm run lint
 
 ## How to Use
 
-1. Click a **stage preset** (Mild → Severe) to snap to typical clinical values.
-2. Drag individual sliders to explore intermediate states.
-3. Watch both panels update together:
-   - Patient view: blur, ghosting, and halos intensify.
-   - Anatomy view: cornea steepens, thins, and may show apical scarring.
+1. Pick a **sample picture** (night, day, park, or reading chart).
+2. Choose a **vision mode**: Normal, Nearsighted, Farsighted, or Keratoconus.
+3. Optionally enable **Compare with normal** for a split view.
+4. In Keratoconus mode, use **stage presets** or sliders to explore Mild → Severe.
+5. Watch both panels update together — patient view filters and cornea cross-section.
 
 ## Educational Note
 

@@ -1,10 +1,18 @@
 import { useId, useMemo } from 'react'
 import { deriveVisualEffects } from '../../lib/stages'
-import type { SimulatorParams } from '../../types'
+import type { SimulatorParams, VisionMode } from '../../types'
 
 interface CorneaDiagramProps {
   params: SimulatorParams
   scarringOverride?: number
+  visionMode?: VisionMode
+}
+
+const MODE_SUBTITLE: Record<VisionMode, string> = {
+  normal: 'Normal cornea · smooth dome',
+  myopia: 'Nearsighted · steeper refractive power',
+  hyperopia: 'Farsighted · flatter refractive power',
+  keratoconus: 'Anatomical view · anterior segment',
 }
 
 /**
@@ -35,11 +43,15 @@ function corneaPaths(curvatureNorm: number, thicknessNorm: number) {
   return { outer, inner, stroma, apexY, apexInnerY, baseThickness }
 }
 
-export function CorneaDiagram({ params, scarringOverride }: CorneaDiagramProps) {
+export function CorneaDiagram({
+  params,
+  scarringOverride,
+  visionMode = 'keratoconus',
+}: CorneaDiagramProps) {
   const uid = useId().replace(/:/g, '')
   const effects = useMemo(() => deriveVisualEffects(params), [params])
   const { outer, inner, stroma, apexY, apexInnerY } = useMemo(
-    () => corneaPaths(effects.curvatureNorm, effects.thicknessNorm),
+    () => corneaPaths(Math.max(0, effects.curvatureNorm), Math.max(0, effects.thicknessNorm)),
     [effects.curvatureNorm, effects.thicknessNorm],
   )
 
@@ -57,7 +69,7 @@ export function CorneaDiagram({ params, scarringOverride }: CorneaDiagramProps) 
           <h2 className="text-sm font-semibold tracking-wide text-white uppercase">
             Eye Cross-Section
           </h2>
-          <p className="text-xs text-[var(--color-muted)]">Anatomical view · anterior segment</p>
+          <p className="text-xs text-[var(--color-muted)]">{MODE_SUBTITLE[visionMode]}</p>
         </div>
         <div className="flex gap-3 text-right text-[11px]">
           <div>

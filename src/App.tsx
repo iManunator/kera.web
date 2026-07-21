@@ -3,13 +3,27 @@ import { Controls } from './components/Controls'
 import { CorneaDiagram } from './components/CorneaDiagram'
 import { VisionSimulator } from './components/VisionSimulator'
 import { DEFAULT_PARAMS, STAGE_PRESETS, matchStage } from './lib/stages'
-import type { KeratoconusStage, SimulatorParams } from './types'
+import { anatomyParamsForMode } from './lib/visionModes'
+import type { KeratoconusStage, SceneId, SimulatorParams, VisionMode } from './types'
 
 export default function App() {
   const [params, setParams] = useState<SimulatorParams>(DEFAULT_PARAMS)
+  const [sceneId, setSceneId] = useState<SceneId>('night-street')
+  const [visionMode, setVisionMode] = useState<VisionMode>('keratoconus')
+  const [compareNormal, setCompareNormal] = useState(true)
 
-  const activeStage = useMemo(() => matchStage(params), [params])
-  const scarringOverride = activeStage?.scarring
+  const activeStage = useMemo(
+    () => (visionMode === 'keratoconus' ? matchStage(params) : null),
+    [params, visionMode],
+  )
+
+  const anatomyParams = useMemo(
+    () => anatomyParamsForMode(visionMode, params),
+    [visionMode, params],
+  )
+
+  const scarringOverride =
+    visionMode === 'keratoconus' ? (activeStage?.scarring ?? undefined) : 0
 
   const handleChange = (key: keyof SimulatorParams, value: number) => {
     setParams((prev) => ({ ...prev, [key]: value }))
@@ -17,10 +31,22 @@ export default function App() {
 
   const handleStageSelect = (stageId: KeratoconusStage) => {
     const stage = STAGE_PRESETS.find((s) => s.id === stageId)
-    if (stage) setParams({ ...stage.params })
+    if (stage) {
+      setVisionMode('keratoconus')
+      setParams({ ...stage.params })
+    }
   }
 
-  const handleReset = () => setParams({ ...DEFAULT_PARAMS })
+  const handleVisionModeSelect = (mode: VisionMode) => {
+    setVisionMode(mode)
+  }
+
+  const handleReset = () => {
+    setParams({ ...DEFAULT_PARAMS })
+    setSceneId('night-street')
+    setVisionMode('keratoconus')
+    setCompareNormal(true)
+  }
 
   return (
     <div className="mx-auto min-h-screen max-w-7xl px-4 py-6 md:px-6 md:py-8">
@@ -34,37 +60,55 @@ export default function App() {
               Kera<span className="text-[var(--color-accent)]">Sim</span>
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-muted)] md:text-base">
-              Explore how keratoconus — progressive corneal thinning and cone-like bulging —
-              reshapes night vision across Mild, Moderate, Advanced, and Severe stages.
+              Compare normal sight, nearsightedness, farsightedness, and keratoconus across day,
+              night, park, and reading scenes.
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-[11px] text-[var(--color-muted)]">
             <span className="rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] px-3 py-1.5">
-              Dual-view · patient + anatomy
+              4 scenes · day & night
             </span>
             <span className="rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] px-3 py-1.5">
-              60fps CSS / SVG filters
+              Normal · Near · Far · KC
             </span>
           </div>
         </div>
       </header>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <VisionSimulator params={params} />
-        <CorneaDiagram params={params} scarringOverride={scarringOverride} />
+        <VisionSimulator
+          params={params}
+          sceneId={sceneId}
+          visionMode={visionMode}
+          compareNormal={compareNormal && visionMode !== 'normal'}
+        />
+        <CorneaDiagram
+          params={anatomyParams}
+          scarringOverride={scarringOverride}
+          visionMode={visionMode}
+        />
       </div>
 
       <div className="mt-5">
         <Controls
           params={params}
           activeStage={activeStage}
+          sceneId={sceneId}
+          visionMode={visionMode}
+          compareNormal={compareNormal}
           onChange={handleChange}
           onStageSelect={handleStageSelect}
+          onSceneSelect={setSceneId}
+          onVisionModeSelect={handleVisionModeSelect}
+          onCompareToggle={setCompareNormal}
           onReset={handleReset}
         />
       </div>
 
-      <section className="animate-fade-up mt-8 grid gap-4 md:grid-cols-4" style={{ animationDelay: '160ms' }}>
+      <section
+        className="animate-fade-up mt-8 grid gap-4 md:grid-cols-4"
+        style={{ animationDelay: '160ms' }}
+      >
         {STAGE_PRESETS.map((stage) => (
           <button
             key={stage.id}
@@ -83,8 +127,9 @@ export default function App() {
       </section>
 
       <footer className="mt-10 border-t border-[var(--color-line)] pt-6 pb-4 text-center text-xs text-[var(--color-muted)]">
-        KeraSim is an educational visualization — not a diagnostic device. Parameter ranges are
-        inspired by typical clinical staging (Kmax / pachymetry) and simplified for teaching.
+        KeraSim is an educational visualization — not a diagnostic device. Refractive modes
+        (myopia / hyperopia) are simplified distance-vs-near blur demos; keratoconus parameters
+        are inspired by typical clinical staging.
       </footer>
     </div>
   )
