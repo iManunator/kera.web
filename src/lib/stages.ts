@@ -63,6 +63,7 @@ export const PARAM_LIMITS = {
 
 /** Map slider params → visual filter intensities (0–1 normalized helpers). */
 export function deriveVisualEffects(params: SimulatorParams) {
+  // Allow slight extrapolation below 42D for hyperopia educational presets
   const curvatureNorm = (params.curvature - 42) / (62 - 42)
   const thicknessNorm = 1 - (params.thickness - 350) / (540 - 350)
   const ghostingNorm = params.ghosting / 100
