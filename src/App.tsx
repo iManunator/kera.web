@@ -53,9 +53,6 @@ export default function App() {
       <header className="animate-fade-up mb-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-[var(--color-accent)] uppercase">
-              Clinical education tool
-            </p>
             <h1 className="font-display text-4xl leading-none text-white md:text-5xl">
               Kera<span className="text-[var(--color-accent)]">Sim</span>
             </h1>
