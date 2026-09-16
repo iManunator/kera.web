@@ -102,27 +102,6 @@ export default function App() {
         />
       </div>
 
-      <section
-        className="animate-fade-up mt-8 grid gap-4 md:grid-cols-4"
-        style={{ animationDelay: '160ms' }}
-      >
-        {STAGE_PRESETS.map((stage) => (
-          <button
-            key={stage.id}
-            type="button"
-            onClick={() => handleStageSelect(stage.id)}
-            className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]/70 p-4 text-left transition hover:border-[var(--color-accent-dim)]"
-          >
-            <div className="text-xs font-semibold tracking-wider text-[var(--color-accent)] uppercase">
-              {stage.label}
-            </div>
-            <p className="mt-2 text-xs leading-relaxed text-[var(--color-muted)]">
-              {stage.description}
-            </p>
-          </button>
-        ))}
-      </section>
-
       <footer className="mt-10 border-t border-[var(--color-line)] pt-6 pb-4 text-center text-xs text-[var(--color-muted)]">
         KeraSim is an educational visualization — not a diagnostic device. Refractive modes
         (myopia / hyperopia) are simplified distance-vs-near blur demos; keratoconus parameters
