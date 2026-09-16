@@ -2,6 +2,14 @@
   "name": "kera-web",
   "private": true,
   "version": "1.0.0",
+  "description": "KeraSim — interactive keratoconus vision simulator (educational)",
+  "license": "MIT",
+  "author": "iManunator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iManunator/kera.web.git"
+  },
+  "homepage": "https://imanunator.github.io/kera.web/",
   "type": "module",
   "scripts": {
     "dev": "vite",

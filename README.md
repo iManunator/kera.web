@@ -1,112 +1,122 @@
-# KeraSim — Keratoconus Vision Simulator
+# KeraSim
 
-A modern, high-performance visual simulator that illustrates how **Keratoconus** (progressive corneal thinning and cone-like bulging) affects vision across four clinical stages: Mild, Moderate, Advanced, and Severe.
+### Keratoconus vision simulator
 
-**Live demo:** [imanunator.github.io/kera.web](https://imanunator.github.io/kera.web/)
+<p align="center">
+  <a href="https://imanunator.github.io/kera.web/"><img src="https://img.shields.io/badge/demo-live-3dd6c6?style=for-the-badge" alt="Live demo" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="MIT License" /></a>
+  <img src="https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react&logoColor=white" alt="React 19" />
+  <img src="https://img.shields.io/badge/Vite-8-646cff?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 8" />
+</p>
 
-## Features
+<p align="center">
+  <strong>See how keratoconus reshapes sight</strong> — from mild steepening to advanced irregular optics — across day, night, park, and reading scenes.
+</p>
 
-### Dual-View Experience
+<p align="center">
+  <a href="https://imanunator.github.io/kera.web/"><b>→ Open the live demo</b></a>
+</p>
 
-1. **Vision Simulation (Patient View)** — Switchable sample pictures with real-time distortions:
-   - **Scenes:** Night Street, Day Street, Park View, Reading Chart
-   - Blur (CSS `blur`)
-   - Irregular astigmatism (SVG `feDisplacementMap`) — keratoconus
-   - Ghosting / monocular polyopia (layered semi-transparent offsets)
-   - Glare & light halos (CSS radial-gradient overlays + brightness)
+---
 
-2. **Eye Cross-Section (Anatomical View)** — Responsive SVG diagram of the cornea morphing from a smooth dome to a steepened, thinned cone, with scarring opacity in advanced/severe stages.
+## What it does
 
-### Vision Modes
+KeraSim is an interactive teaching visualization for **keratoconus** (progressive corneal thinning and cone-like bulging). Compare normal vision, common refractive errors, and keratoconus side by side — with a live cornea cross-section that morphs as parameters change.
 
-| Mode | What you see |
-|------|----------------|
-| **Normal** | Sharp emmetropic vision |
-| **Nearsighted (Myopia)** | Distance blur; reading stays clearer |
-| **Farsighted (Hyperopia)** | Near/reading blur; distance stays clearer |
-| **Keratoconus** | Ghosting, glare, irregular blur (stage sliders) |
+> **Not a medical device.** Parameter ranges are simplified educational approximations, not diagnostic tools.
 
-Toggle **Compare with normal** for a side-by-side normal vs selected mode view.
+### Dual view
 
-### Interactive Controls
+| Panel | What you get |
+| --- | --- |
+| **Vision simulation** | Patient-style scene with blur, ghosting, displacement, and night glare |
+| **Cornea diagram** | SVG cross-section that steepens and thins with stage / sliders |
 
-| Control | Range | Clinical meaning |
-|--------|--------|------------------|
-| Corneal Curvature / Bulge | 42D → 62D | Steeper Kmax / cone progression |
-| Corneal Thickness (Pachymetry) | 540 µm → 350 µm | Central thinning |
-| Visual Ghosting / Astigmatism | 0–100% | Irregular optics / polyopia |
-| Glare & Night Halos | 0–100% | Scatter around bright lights |
+### Vision modes
 
-**Stage preset buttons** snap all sliders to Mild / Moderate / Advanced / Severe clinical-inspired values (Keratoconus mode).
+| Mode | Effect |
+| --- | --- |
+| **Normal** | Sharp emmetropic focus |
+| **Nearsighted** | Distance blur; near stays clearer |
+| **Farsighted** | Near blur; distance stays clearer |
+| **Keratoconus** | Ghosting, glare, irregular blur + stage presets |
 
-## Tech Stack
+Enable **Compare with normal** for a split view.
 
-- React 19 + TypeScript
-- Vite 8
-- Tailwind CSS 4
-- SVG filters + CSS for 60fps-friendly real-time effects
+### Keratoconus controls
 
-## Project Structure
+| Control | Range | Meaning |
+| --- | --- | --- |
+| Corneal curvature | 42D → 62D | Steeper Kmax / cone progression |
+| Corneal thickness | 540 µm → 350 µm | Central thinning (pachymetry) |
+| Ghosting / astigmatism | 0–100% | Irregular optics / polyopia |
+| Glare & night halos | 0–100% | Scatter around bright lights |
+
+Stage presets (**Mild → Severe**) snap sliders to clinical-inspired values.
+
+---
+
+## Tech stack
+
+- **React 19** + **TypeScript**
+- **Vite 8**
+- **Tailwind CSS 4**
+- Real-time effects via CSS filters, layered ghost copies, and SVG `feDisplacementMap`
 
 ```
 src/
   components/
-    VisionSimulator/   # Patient-view scenes + live filters
-      NightScene.tsx
-      DayScene.tsx
-      ParkScene.tsx
-      ReadingScene.tsx
-      SceneView.tsx
+    VisionSimulator/   # Scenes + live vision filters
     CorneaDiagram/     # Anatomical SVG cross-section
-    Controls/          # Scenes, vision modes, sliders, stage presets
+    Controls/          # Scenes, modes, sliders, presets
   lib/
-    stages.ts          # KC clinical presets + effect derivation
+    stages.ts          # KC presets + effect derivation
     scenes.ts          # Sample picture catalog
     visionModes.ts     # Normal / myopia / hyperopia / KC
-  types.ts
-  App.tsx
-  index.css
 ```
 
-## Local Setup
+---
 
-**Requirements:** Node.js 18+ and npm.
+## Quick start
+
+**Requires** Node.js 18+ and npm.
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/iManunator/kera.web.git
 cd kera.web
-
-# 2. Install dependencies
 npm install
-
-# 3. Start the development server
 npm run dev
 ```
 
 Open the URL Vite prints (usually `http://localhost:5173/kera.web/`).
 
-### Other commands
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Local development server |
+| `npm run build` | Production build → `dist/` |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Lint with oxlint |
 
-```bash
-# Production build
-npm run build
+---
 
-# Preview the production build locally
-npm run preview
+## How to explore
 
-# Lint
-npm run lint
-```
+1. Pick a **scene** — night street, day street, park, or reading chart  
+2. Choose a **vision mode** — Normal, Near, Far, or Keratoconus  
+3. Toggle **Compare with normal** for a side-by-side view  
+4. In Keratoconus mode, use **stage presets** or fine-tune the sliders  
+5. Watch the patient view and cornea diagram update together  
 
-## How to Use
+---
 
-1. Pick a **sample picture** (night, day, park, or reading chart).
-2. Choose a **vision mode**: Normal, Nearsighted, Farsighted, or Keratoconus.
-3. Optionally enable **Compare with normal** for a split view.
-4. In Keratoconus mode, use **stage presets** or sliders to explore Mild → Severe.
-5. Watch both panels update together — patient view filters and cornea cross-section.
+## License
 
-## Educational Note
+Released under the [MIT License](LICENSE) — free to use, modify, and share.
 
-KeraSim is a teaching visualization, **not** a diagnostic or clinical decision-support device. Parameter ranges are simplified approximations inspired by common keratoconus staging (Kmax / pachymetry).
+## AI-assisted development
+
+This project was **developed with AI assistance** (Cursor). Human direction, review, and decisions remain with the maintainer; the AI helped implement UI, vision effects, and tooling.
+
+## Disclaimer
+
+KeraSim is for **education and demonstration only**. It is not intended for diagnosis, treatment planning, or clinical decision support.
