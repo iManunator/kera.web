@@ -2,6 +2,8 @@
 
 A modern, high-performance visual simulator that illustrates how **Keratoconus** (progressive corneal thinning and cone-like bulging) affects vision across four clinical stages: Mild, Moderate, Advanced, and Severe.
 
+**Live demo:** [imanunator.github.io/kera.web](https://imanunator.github.io/kera.web/)
+
 ## Features
 
 ### Dual-View Experience
@@ -10,7 +12,7 @@ A modern, high-performance visual simulator that illustrates how **Keratoconus**
    - **Scenes:** Night Street, Day Street, Park View, Reading Chart
    - Blur (CSS `blur`)
    - Irregular astigmatism (SVG `feDisplacementMap`) — keratoconus
-   - Ghosting / monocular polyopia (layered offsets + drop-shadows)
+   - Ghosting / monocular polyopia (layered semi-transparent offsets)
    - Glare & light halos (CSS radial-gradient overlays + brightness)
 
 2. **Eye Cross-Section (Anatomical View)** — Responsive SVG diagram of the cornea morphing from a smooth dome to a steepened, thinned cone, with scarring opacity in advanced/severe stages.
@@ -82,7 +84,7 @@ npm install
 npm run dev
 ```
 
-Open the URL Vite prints (usually `http://localhost:5173`).
+Open the URL Vite prints (usually `http://localhost:5173/kera.web/`).
 
 ### Other commands
 
