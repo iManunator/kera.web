@@ -96,15 +96,17 @@ function FilteredScene({
 }) {
   const uid = useId().replace(/:/g, '')
   const filterId = `kc-displace-${uid}`
-  const scene = getScene(sceneId)
 
+  // Semi-transparent offset copies of the same scene (monocular polyopia).
+  // Opacity stays well below 1 so ghosts read as layered doubles, not solid warp.
   const ghostLayers = useMemo(() => {
     const o = effects.ghostOffset
     if (o < 0.5) return []
+    const strength = Math.min(1, o / 14)
     return [
-      { x: -o * 0.85, y: -o * 0.25, opacity: 0.28 + Math.min(0.3, o / 40) },
-      { x: o * 0.7, y: o * 0.35, opacity: 0.22 + Math.min(0.25, o / 50) },
-      { x: -o * 0.35, y: o * 0.55, opacity: 0.16 + Math.min(0.2, o / 60) },
+      { x: -o * 0.9, y: -o * 0.2, opacity: 0.18 + strength * 0.22 },
+      { x: o * 0.75, y: o * 0.3, opacity: 0.14 + strength * 0.18 },
+      { x: -o * 0.35, y: o * 0.55, opacity: 0.1 + strength * 0.12 },
     ]
   }, [effects.ghostOffset])
 
@@ -116,6 +118,12 @@ function FilteredScene({
   ]
     .filter(Boolean)
     .join(' ')
+
+  const ghostFilter = [
+    effects.blurPx > 0.05 ? `blur(${(effects.blurPx + 0.4).toFixed(2)}px)` : 'blur(0.4px)',
+    `brightness(${effects.brightness.toFixed(3)})`,
+    `contrast(${effects.contrast.toFixed(3)})`,
+  ].join(' ')
 
   const haloBackground = sceneHaloBackground(sceneId, effects)
 
@@ -130,16 +138,16 @@ function FilteredScene({
           <defs>
             <filter
               id={filterId}
-              x="-15%"
-              y="-15%"
-              width="130%"
-              height="130%"
+              x="-10%"
+              y="-10%"
+              width="120%"
+              height="120%"
               colorInterpolationFilters="sRGB"
             >
               <feTurbulence
                 type="fractalNoise"
-                baseFrequency={0.012 + Math.min(0.03, effects.ghostOffset / 400)}
-                numOctaves="3"
+                baseFrequency="0.018"
+                numOctaves="2"
                 seed="7"
                 result="noise"
               />
@@ -155,15 +163,18 @@ function FilteredScene({
         </svg>
       )}
 
+      <div className="absolute inset-0" style={{ filter: sceneFilter, willChange: 'filter' }}>
+        <SceneView sceneId={sceneId} uid={`${uid}-main`} />
+      </div>
+
       {ghostLayers.map((layer, i) => (
         <div
           key={i}
           className="pointer-events-none absolute inset-0"
           style={{
-            transform: `translate(${layer.x}px, ${layer.y}px)`,
+            transform: `translate(${layer.x.toFixed(1)}px, ${layer.y.toFixed(1)}px)`,
             opacity: layer.opacity,
-            filter: `blur(${(effects.blurPx * 0.6 + 0.5).toFixed(2)}px)`,
-            mixBlendMode: scene.timeOfDay === 'night' ? 'screen' : 'multiply',
+            filter: ghostFilter,
             willChange: 'transform, filter, opacity',
           }}
           aria-hidden="true"
@@ -171,27 +182,6 @@ function FilteredScene({
           <SceneView sceneId={sceneId} uid={`${uid}-g${i}`} />
         </div>
       ))}
-
-      <div className="absolute inset-0" style={{ filter: sceneFilter, willChange: 'filter' }}>
-        <SceneView sceneId={sceneId} uid={`${uid}-main`} />
-      </div>
-
-      {effects.ghostOffset > 0.5 && (
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            opacity: Math.min(0.55, effects.ghostOffset / 20),
-            filter: `
-              drop-shadow(${effects.ghostOffset * 0.6}px ${effects.ghostOffset * 0.2}px 0 rgba(255,255,255,0.25))
-              drop-shadow(${-effects.ghostOffset * 0.5}px ${effects.ghostOffset * 0.3}px 0 rgba(180,220,255,0.2))
-            `,
-            mixBlendMode: 'screen',
-          }}
-          aria-hidden="true"
-        >
-          <SceneView sceneId={sceneId} uid={`${uid}-drop`} />
-        </div>
-      )}
 
       {effects.showHalos && effects.haloOpacity > 0.02 && (
         <div

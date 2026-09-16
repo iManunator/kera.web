@@ -70,13 +70,13 @@ export function deriveVisualEffects(params: SimulatorParams) {
   const glareNorm = params.glare / 100
 
   // Blur grows with steepening + thinning (myopia / irregular optics)
-  const blurPx = curvatureNorm * 4.5 + thicknessNorm * 1.5 + ghostingNorm * 1.2
+  const blurPx = curvatureNorm * 4.5 + thicknessNorm * 1.5 + ghostingNorm * 0.6
 
-  // Displacement scale for SVG feDisplacementMap
-  const displaceScale = ghostingNorm * 28 + curvatureNorm * 8
+  // Mild irregular warp — keep low so polyopia reads as offset copies, not liquid warp
+  const displaceScale = curvatureNorm * 5 + ghostingNorm * 4
 
-  // Ghost layer offsets (monocular polyopia)
-  const ghostOffset = ghostingNorm * 10
+  // Ghost layer offsets in px (monocular polyopia / diplopia)
+  const ghostOffset = ghostingNorm * 14
 
   // Halo / glare overlay strength
   const haloOpacity = glareNorm * 0.75 + curvatureNorm * 0.1
